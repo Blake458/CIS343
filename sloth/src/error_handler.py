@@ -11,3 +11,5 @@ class ErrorHandler:
     def report(line, where, message):
         print(f"LINE: {line}\nERROR: {where}: {message}")
         ErrorHandler.error_detected = True
+        sys.exit()
+        

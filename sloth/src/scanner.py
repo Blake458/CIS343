@@ -11,7 +11,8 @@ Author:         Blake Collins
 """
 
 # imports
-from custom_token import *
+from sloth.src.custom_token import *
+from sloth.src.error_handler import ErrorHandler
 
 
 class Scanner:
@@ -132,14 +133,6 @@ class Scanner:
             else:
                 self.add_token(TokenValue.MINUS)
         
-        elif char == "/":
-            # Handle comments
-            if self.match("/"):
-                while self.peek(1) != "\n" and not self.eof_reached():
-                    self.advance()
-            else:
-                self.add_token(TokenValue.SLASH)
-        
         elif char == "=":
             if self.match("="):
                 self.add_token(TokenValue.EQUAL_EQUAL)
@@ -164,6 +157,14 @@ class Scanner:
             else:
                 self.add_token(TokenValue.LESS)
         
+        elif char == "/":
+            # Handle comments
+            if self.match("/"):
+                while self.peek(1) != "\n" and not self.eof_reached():
+                    self.advance()
+            else:
+                self.add_token(TokenValue.SLASH)
+        
         elif char == '"':
             while self.peek(1) != '"' and not self.eof_reached():
                 if self.peek(1) == "\n":
@@ -171,7 +172,7 @@ class Scanner:
                 self.advance()
 
             if self.eof_reached():
-                raise Exception("Unterminated string literal")
+                ErrorHandler.error(self.line, "Unterminated string literal")
 
             # Closing "
             self.advance()
@@ -207,7 +208,7 @@ class Scanner:
             self.line += 1
 
         else:
-            raise Exception(f"ERROR: UNEXPECTED CHARACTER '{char}' AT LINE {self.line}")
+            ErrorHandler(self.line, f"ERROR: UNEXPECTED CHARACTER '{char}' AT LINE {self.line}")
 
 
     def match(self, expected):

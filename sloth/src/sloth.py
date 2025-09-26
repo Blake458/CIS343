@@ -4,8 +4,8 @@
 import sys
 
 # costom packages
-from error_handler import ErrorHandler
-from scanner import Scanner
+from sloth.src.error_handler import ErrorHandler
+from sloth.src.scanner import Scanner
 
 class Sloth:
 

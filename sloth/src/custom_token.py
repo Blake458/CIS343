@@ -1,4 +1,4 @@
-from token_values import TokenValue
+from sloth.src.token_values import TokenValue
 
 class Token:
 
