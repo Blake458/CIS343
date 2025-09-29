@@ -4,8 +4,9 @@
 import sys
 
 # costom packages
-from sloth.src.error_handler import ErrorHandler
-from sloth.src.scanner import Scanner
+from scanner import *
+from parser import *
+from ast_printer import *
 
 class Sloth:
 
@@ -22,10 +23,23 @@ class Sloth:
             print("\n======== EXITING SLOTH SHELL ========")
 
     def run(self, source):
+        """
+        Run the scanner
+
+        input: source (file or command line text)
+        output: t
+        """
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
-        for token in tokens:
-            print(token)
+        parser = Parser(tokens)
+        ast = parser.parse()
+
+        if ErrorHandler.error_detected:
+            sys.exit(65)
+        else:
+            if ast is not None:
+                printer = AstPrinter()
+                print(printer.visit(ast))
 
 
 if __name__ == "__main__":
@@ -36,4 +50,4 @@ if __name__ == "__main__":
     elif len(sys.argv) == 2:
         sloth.run_file(sys.argv[1])
     else:
-        sloth.run_shell
+        sloth.run_shell()

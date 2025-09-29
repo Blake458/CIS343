@@ -11,8 +11,8 @@ Author:         Blake Collins
 """
 
 # imports
-from sloth.src.custom_token import *
-from sloth.src.error_handler import ErrorHandler
+from custom_token import *
+from error_handler import *
 
 
 class Scanner:
@@ -27,22 +27,22 @@ class Scanner:
     """
 
     keywords = {
-        "new": TokenValue.NEW,
-        "true": TokenValue.TRUE,
+        "new"  : TokenValue.NEW,
+        "true" : TokenValue.TRUE,
         "false": TokenValue.FALSE,
         "sloth": TokenValue.SLOTH,
-        "null": TokenValue.NULL,
-        "and": TokenValue.AND,
-        "or": TokenValue.OR,
-        "if": TokenValue.IF,
-        "else": TokenValue.ELSE,
+        "null" : TokenValue.NULL,
+        "and"  : TokenValue.AND,
+        "or"   : TokenValue.OR,
+        "if"   : TokenValue.IF,
+        "else" : TokenValue.ELSE,
         "while": TokenValue.WHILE,
-        "for": TokenValue.FOR,
+        "for"  : TokenValue.FOR,
         "print": TokenValue.PRINT,
-        "give": TokenValue.GIVE,
+        "give" : TokenValue.GIVE,
         "super": TokenValue.SUPER,
-        "this": TokenValue.THIS,
-        "fun": TokenValue.FUN,
+        "this" : TokenValue.THIS,
+        "fun"  : TokenValue.FUN,
     }
     
     def __init__(self, source):
@@ -208,7 +208,7 @@ class Scanner:
             self.line += 1
 
         else:
-            ErrorHandler(self.line, f"ERROR: UNEXPECTED CHARACTER '{char}' AT LINE {self.line}")
+            ErrorHandler(self.source[self.current], f"ERROR: UNEXPECTED CHARACTER '{char}' AT LINE {self.line}")
 
 
     def match(self, expected):

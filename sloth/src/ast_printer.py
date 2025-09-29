@@ -6,7 +6,8 @@ AST Printer that produces parenthesized expressions like:
 This file assumes `expression.py` (generated) is available in the same directory.
 """
 
-from expression import Binary, Grouping, Literal, Unary, Visitor
+from expression import *
+from visitor import Visitor
 
 class AstPrinter(Visitor):
     """
@@ -55,16 +56,6 @@ class AstPrinter(Visitor):
 
 
 if __name__ == "__main__":
-    # We build this AST:
-    # expression = Binary(
-    #   Unary(Token(TokenType.MINUS, "-", None, 1), Literal(123)),
-    #   Token(TokenType.STAR, "*", None, 1),
-    #   Grouping(Literal(45.67)),
-    # )
-    #
-    # The printer should output: (* (- 123) (group 45.67))
-
-    # Because we don't have a Token class here, create a tiny stand-in:
     class Token:
         def __init__(self, lexeme):
             self.lexeme = lexeme
