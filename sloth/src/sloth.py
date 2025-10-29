@@ -1,14 +1,17 @@
 # Sloth class
 
-# python packages
+# Python packages
 import sys
 
-# costom packages
+# Custom packages
 from scanner import *
 from parser import *
-from ast_printer import *
+from interpreter import Interpreter
+from error_handler import ErrorHandler
 
 class Sloth:
+    def __init__(self):
+        self.interpreter = Interpreter()
 
     def run_file(self, path):
         with open(path) as file:
@@ -18,28 +21,35 @@ class Sloth:
         try:
             print("========== SLOTH SHELL ==========")
             while True:
-                self.run(input("> "))
+                line = input("> ")
+                if not line.strip():
+                    continue
+                self.run(line)
         except KeyboardInterrupt:
             print("\n======== EXITING SLOTH SHELL ========")
 
     def run(self, source):
         """
-        Run the scanner
-
-        input: source (file or command line text)
-        output: t
+        Run the scanner, parser, and interpreter
         """
         scanner = Scanner(source)
         tokens = scanner.scan_tokens()
         parser = Parser(tokens)
-        ast = parser.parse()
+        ast = parser.ast  # returns a list of Stmt nodes
 
+        # Stop if syntax errors were detected
         if ErrorHandler.error_detected:
             sys.exit(65)
         else:
-            if ast is not None:
-                printer = AstPrinter()
-                print(printer.visit(ast))
+            # Interpret all statements
+            if ast:
+                for stmt in ast:
+                    try:
+                        result = stmt.accept(self.interpreter)
+                        if result is not None and not isinstance(stmt, (AssignStmt, VarStmt)):
+                            print(result)
+                    except RuntimeError as e:
+                        print(f"[Runtime Error] {e}")
 
 
 if __name__ == "__main__":

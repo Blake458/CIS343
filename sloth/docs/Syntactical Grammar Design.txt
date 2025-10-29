@@ -1,23 +1,47 @@
-============================================
-        SYNTACTICAL GRAMMAR DESIGN          
-            by Blake Collins
-============================================
+==================================================
+           SYNTACTICAL GRAMMAR DESIGN          
+               by Blake Collins
+==================================================
 
-expression     -> literal
-                | unary
-                | binary
-                | grouping ;
+program        -> statement* EOF ;
 
-literal        -> NUMBER | STRING | "true" | "false" | "null" ;
+statement      -> printStmt
+                | ifStmt
+                | varDecl
+                | block
+                | expressionStmt ;
 
-grouping       -> "(" expression ")" ;
+ifStmt         -> "if" "(" expression ")" statement
+                ("else" statement )? ;
 
-unary          -> ( "-" | "!" ) expression ;
+printStmt      -> "print" expression ";" ;
 
-binary         -> expression operator expression ;
+varDecl        -> "new" IDENTIFIER ("=" expression)? ";" ;
 
-operator       -> "=" | "!=" 
-                | "<" | ">" 
-                | "<=" | ">=" 
-                | "+" | "-" 
-                | "*" | "/" ;
+block          -> "{" statement* "}" ;
+
+expressionStmt -> expression ";" ;
+
+expression     -> assignment ;
+
+assignment     -> IDENTIFIER "=" assignment
+                | equality ;
+
+equality       -> comparison ( ( "==" | "!=" ) comparison )* ;
+
+comparison     -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+
+term           -> factor ( ( "+" | "-" ) factor )* ;
+
+factor         -> unary ( ( "*" | "/" ) unary )* ;
+
+unary          -> ( "-" | "!" ) unary
+                | primary ;
+
+primary        -> NUMBER
+                | STRING
+                | "True"
+                | "False"
+                | "null"
+                | IDENTIFIER
+                | "(" expression ")" ;

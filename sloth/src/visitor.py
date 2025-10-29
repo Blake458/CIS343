@@ -5,6 +5,6 @@ class Visitor:
         visitor = getattr(self, method_name, None)
 
         if visitor is None:
-            raise NotImplementedError(f"visit{node.__class__.__name__} not defined")
+            raise NotImplementedError(f"visit_{node.__class__.__name__} not defined")
         
         return visitor(node)

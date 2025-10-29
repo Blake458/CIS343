@@ -3,8 +3,18 @@
 from visitor import Visitor
 
 class Expression:
-    """class for AST nodes."""
+    """Base class for Expression AST nodes."""
     pass
+
+
+class Assign(Expression):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
+    def accept(self, visitor):
+        return visitor.visit_Assign(self)
 
 
 class Binary(Expression):
@@ -44,5 +54,14 @@ class Unary(Expression):
 
     def accept(self, visitor):
         return visitor.visit_Unary(self)
+
+
+class Variable(Expression):
+    def __init__(self, name):
+        self.name = name
+
+
+    def accept(self, visitor):
+        return visitor.visit_Variable(self)
 
 
