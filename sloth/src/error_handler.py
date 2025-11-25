@@ -32,4 +32,4 @@ class ParseError(RuntimeError):
 
     def __init__(self, token: Token, message: str):
         super().__init__(message)
-        print(f"[Parse Error at '{token.lexeme}' (line {token.line})] {message}", file=sys.stderr)
+

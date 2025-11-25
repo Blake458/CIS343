@@ -31,10 +31,10 @@ class Scanner:
     # Reserved words mapped to their corresponding token types.
     keywords = {
         "new"  : TokenValue.NEW,    # var
-        "TRUE" : TokenValue.TRUE,
-        "FALSE": TokenValue.FALSE,
+        "true" : TokenValue.TRUE,
+        "false": TokenValue.FALSE,
         "sloth": TokenValue.SLOTH,  # class
-        "NULL" : TokenValue.NULL,   # nil or none
+        "null" : TokenValue.NULL,   # nil or none
         "and"  : TokenValue.AND,
         "or"   : TokenValue.OR,
         "if"   : TokenValue.IF,

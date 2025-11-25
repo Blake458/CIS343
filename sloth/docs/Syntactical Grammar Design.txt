@@ -5,9 +5,11 @@
 
 program        -> statement* EOF ;
 
+declaration    -> varDecl
+                | statement
+
 statement      -> printStmt
                 | ifStmt
-                | varDecl
                 | block
                 | expressionStmt ;
 

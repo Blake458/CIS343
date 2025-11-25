@@ -4,6 +4,8 @@ class Environment:
         self.enclosing = enclosing  # parent scope (for block scoping)
 
     def define(self, name, value=None):
+        if name in self.values:
+            raise RuntimeError(f"Variable '{name}' already declared in this scope.")
         self.values[name] = value
 
     def get(self, name):
@@ -21,3 +23,15 @@ class Environment:
             self.enclosing.assign(name, value)
             return
         raise RuntimeError(f"Undefined variable '{name}'.")
+    
+    def ancestor(self, distance):
+        env = self
+        for _ in range(distance):
+            env = env.enclosing
+        return env
+
+    def get_at(self, distance, name):
+        return self.ancestor(distance).values[name]
+
+    def assign_at(self, distance, name, value):
+        self.ancestor(distance).values[name] = value

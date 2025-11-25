@@ -6,6 +6,7 @@ import sys
 # Custom packages
 from scanner import *
 from parser import *
+from resolver import *
 from interpreter import Interpreter
 from error_handler import ErrorHandler
 
@@ -37,6 +38,9 @@ class Sloth:
         parser = Parser(tokens)
         ast = parser.ast  # returns a list of Stmt nodes
 
+        resolver = Resolver(self.interpreter)
+        resolver.resolve_all(ast)
+
         # Stop if syntax errors were detected
         if ErrorHandler.error_detected:
             sys.exit(65)
@@ -50,6 +54,7 @@ class Sloth:
                             print(result)
                     except RuntimeError as e:
                         print(f"[Runtime Error] {e}")
+                        return
 
 
 if __name__ == "__main__":

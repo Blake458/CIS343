@@ -51,10 +51,13 @@ class Parser:
             return []
         
     def declaration(self):
-        """Parse a declaration: variable or statement."""
         try:
+            if self.match(TokenValue.FUN):
+                return self.fun_declaration()   # <-- call fun_declaration, not function()
+
             if self.match(TokenValue.NEW):
                 return self.var_declaration()
+
             return self.statement()
         except ParseError:
             self.synchronize()
@@ -71,15 +74,52 @@ class Parser:
 
         self.consume(TokenValue.SEMICOLON, "Expect ';' after variable declaration.")
         return VarStmt(name.lexeme, initializer)
+    
+
+    def fun_declaration(self):
+        name = self.consume(TokenValue.IDENTIFIER, "Expect function name.")
+        self.consume(TokenValue.LEFT_PAREN, "Expect '(' after function name.")
+        
+        params = []
+        if not self.check(TokenValue.RIGHT_PAREN):
+            while True:
+                if len(params) >= 255:
+                    self.error(self.peek(), "Cannot have more than 255 parameters.")
+                params.append(self.consume(TokenValue.IDENTIFIER, "Expect parameter name."))
+                if not self.match(TokenValue.COMMA):
+                    break
+
+        self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after parameters.")
+        self.consume(TokenValue.LEFT_BRACE, "Expect '{' before function body.")
+        body = Block(self.block())
+        return Function(name.lexeme, params, body)
 
 
     def statement(self):
-        """Parse a general statement."""
         if self.match(TokenValue.PRINT):
             return self.print_statement()
+        if self.match(TokenValue.IF):
+            return self.if_statement()
+        if self.match(TokenValue.WHILE):
+            return self.while_statement()
+        if self.match(TokenValue.FOR):
+            return self.for_statement()
         if self.match(TokenValue.LEFT_BRACE):
-            return Block(self.block())  # block scope
+            return Block(self.block())
+        if self.match(TokenValue.GIVE):
+            return self.return_statement()
+
         return self.expression_statement()
+
+
+    def return_statement(self):
+        keyword = self.previous()
+        value = None
+        if not self.check(TokenValue.SEMICOLON):
+            value = self.expression()
+        self.consume(TokenValue.SEMICOLON, "Expect ';' after return value.")
+        return ReturnStmt(keyword, value)
+
 
 
     def print_statement(self):
@@ -92,6 +132,81 @@ class Parser:
         expr = self.expression()
         self.consume(TokenValue.SEMICOLON, "Expect ';' after expression.")
         return ExpressionStmt(expr)
+    
+
+    def if_statement(self):
+        self.consume(TokenValue.LEFT_PAREN, "Expect '(' after 'if'.")
+        condition = self.expression()
+        self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after if condition.")
+
+        if not self.match(TokenValue.LEFT_BRACE):
+            self.error(self.peek(), "Expected '{' after if condition.")
+        then_branch = Block(self.block())
+
+        if len(then_branch.statements) == 1 and isinstance(then_branch.statements[0], VarStmt):
+            self.error(self.previous(), "A block containing only a single variable declaration is not allowed.")
+
+        else_branch = None
+        if self.match(TokenValue.ELSE):
+            if not self.match(TokenValue.LEFT_BRACE):
+                self.error(self.peek(), "Expected '{' after else.")
+            else_branch = Block(self.block())
+
+            if len(else_branch.statements) == 1 and isinstance(else_branch.statements[0], VarStmt):
+                self.error(self.previous(), "A block containing only a single variable declaration is not allowed.")
+
+        return IfStmt(condition, then_branch, else_branch)
+
+
+    def while_statement(self):
+        self.consume(TokenValue.LEFT_PAREN, "Expect '(' after 'while'.")
+        condition = self.expression()
+        self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after while condition.")
+
+        # Require block for the loop body
+        if not self.match(TokenValue.LEFT_BRACE):
+            self.error(self.peek(), "Expected '{' after while condition.")
+        body = Block(self.block())
+
+        if len(body.statements) == 1 and isinstance(body.statements[0], VarStmt):
+            self.error(self.previous(), "A block containing only a single variable declaration is not allowed.")
+
+        return WhileStmt(condition, body)
+    
+
+    def for_statement(self):
+        self.consume(TokenValue.LEFT_PAREN, "Expect '(' after 'for'.")
+
+        # --- Initializer ---
+        if self.match(TokenValue.SEMICOLON):
+            initializer = None
+        elif self.match(TokenValue.NEW):
+            initializer = self.var_declaration()
+        else:
+            initializer = self.expression_statement()
+
+        # --- Condition ---
+        condition = None
+        if not self.check(TokenValue.SEMICOLON):
+            condition = self.expression()
+        self.consume(TokenValue.SEMICOLON, "Expect ';' after loop condition.")
+
+        # --- Increment ---
+        increment = None
+        if not self.check(TokenValue.RIGHT_PAREN):
+            increment = self.expression()
+        self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after for clauses.")
+
+        # --- Body ---
+        if not self.match(TokenValue.LEFT_BRACE):
+            self.error(self.peek(), "Expected '{' after for clauses.")
+        body = Block(self.block())
+
+        # --- Prevent single-var-only block ---
+        if len(body.statements) == 1 and isinstance(body.statements[0], VarStmt):
+            self.error(self.previous(), "A block containing only a single variable declaration is not allowed.")
+
+        return ForStmt(initializer, condition, increment, body)
 
 
     def block(self):
@@ -223,14 +338,30 @@ class Parser:
         if self.match(TokenValue.NUMBER, TokenValue.STRING):
             return Literal(self.previous().literal)
         if self.match(TokenValue.IDENTIFIER):
-            return Variable(self.previous().lexeme)
+            return self.finish_call(Variable(self.previous().lexeme))
         if self.match(TokenValue.LEFT_PAREN):
             expr = self.expression()
             self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after expression.")
             return Grouping(expr)
-        
         self.error(self.peek(), "Expect expression.")
     
+
+    def finish_call(self, callee):
+        while True:
+            if self.match(TokenValue.LEFT_PAREN):
+                arguments = []
+                if not self.check(TokenValue.RIGHT_PAREN):
+                    while True:
+                        arguments.append(self.expression())
+                        if not self.match(TokenValue.COMMA):
+                            break
+                paren = self.consume(TokenValue.RIGHT_PAREN, "Expect ')' after arguments.")
+                callee = Call(callee, paren, arguments)
+            else:
+                break
+        return callee
+
+
     def synchronize(self):
         """
         Error recovery method.
@@ -251,7 +382,7 @@ class Parser:
                           TokenValue.GIVE):
                 return
             self.advance()
-            return
+        return
         
     def consume(self, token_type, message):
         """
@@ -329,7 +460,7 @@ class Parser:
         Returns:
             Token: The current token.
         """
-        if self.current >= len(self.tokens):
+        if self.tokens[-1].line >= len(self.tokens):
             return Token(TokenValue.EOF, "", None, self.current)
         return self.tokens[self.current]
 

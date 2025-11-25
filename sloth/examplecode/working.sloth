@@ -1,19 +1,7 @@
-new a = "global a";
-new b = "global b";
-new c = "global c";
-{
-    new a = "outer a";
-    new b = "outer b";
-    {
-        new a = "inner a";
-        print a;
-        print b;
-        print c;
-    }
+new a = "global";
+fun showA(){
     print a;
-    print b;
-    print c;
 }
-print a;
-print b;
-print c;
+showA();
+new a = "change_block";
+showA();
