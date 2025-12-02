@@ -1,0 +1,18 @@
+sloth Foo {
+    init() {
+        this.value = "foo";
+    }
+}
+
+sloth Bar < Foo {
+    init() {
+        supersloth.init();
+        this.extra = "bar";
+    }
+    
+    show_info() {
+        print this.value + this.extra;
+    }
+}
+new test = Bar();
+test.show_info();

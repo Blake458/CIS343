@@ -1,0 +1,62 @@
+============================================
+          Lexical Grammar Design
+============================================
+
+1. Single-character tokens
+- LEFT_PAREN: ( 
+- RIGHT_PAREN: )
+- LEFT_BRACE: { 
+- RIGHT_BRACE: } 
+- LEFT_BRACKET: [ 
+- RIGHT_BRACKET: ] 
+- COMMA: , 
+- DOT: . 
+- SEMICOLON: ; 
+- PLUS: + 
+- MINUS: - 
+- STAR: * 
+- SLASH: / 
+- EQUAL: = 
+- BANG: ! 
+- GREATER: > 
+- LESS: < 
+
+2. Multi-character operators
+- PLUSPLUS: ++ 
+- MINUSMINUS: -- 
+- EQUAL_EQUAL: == 
+- BANG_EQUAL: != 
+- GREATER_EQUAL: >= 
+- LESS_EQUAL: <= 
+
+3. Literals
+- IDENTIFIER: Starts with a letter (A–Z, a–z) or underscore (_), 
+  followed by zero or more letters, digits, or underscores.
+  Example: foo, bar1, _temp
+
+- NUMBER: One or more digits (0–9). 
+  Optionally allow a decimal point with more digits.
+  Example: 123, 0, 45.67
+
+- STRING: Characters enclosed in double quotes ("). 
+  May contain escape sequences such as \" for quotes or \n for newlines.
+  Example: "hello", "line1\nline2"
+
+- BOOLEAN: true | false
+
+- NULL: null
+
+4. Keywords (reserved words)
+These cannot be used as identifiers:
+- NEW: new               // variable declaration
+- TRUE: True             // boolean literal
+- FALSE: False           // boolean literal
+- NULL: null
+- AND: and
+- OR: or
+- IF: if
+- ELSE: else
+- WHILE: while
+- FOR: for
+- PRINT: print           // print statement
+- GIVE: give             // return stat

@@ -1,0 +1,10 @@
+// Nested blocks with scope issues
+{
+    new y = 1;
+    {
+        print y;      // Works
+        print z;      // Error: Undefined variable 'z'
+    }
+}
+
+

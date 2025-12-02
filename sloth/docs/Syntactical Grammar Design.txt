@@ -1,0 +1,60 @@
+==================================================
+           SYNTACTICAL GRAMMAR DESIGN          
+               by Blake Collins
+==================================================
+
+program        -> statement* EOF ;
+
+declaration    -> classDecl
+                | funDecl
+                | varDecl
+                | statement
+
+classDecl      -> "sloth" IDENTIFIER "{" function* "}" ;
+
+function       -> IDENTIFIER "(" parameters? ")" block ;
+
+parameters     -> IDENTIFIER ( "," IDENTIFIER )* ;
+
+funDecl        -> "fun" IDENTIFIER "{"  "}"
+
+varDecl        -> "new" IDENTIFIER ("=" expression)? ";" ;
+
+statement      -> printStmt
+                | ifStmt
+                | block
+                | expressionStmt ;
+
+ifStmt         -> "if" "(" expression ")" statement
+                ("else" statement )? ;
+
+printStmt      -> "print" expression ";" ;
+
+
+block          -> "{" statement* "}" ;
+
+expressionStmt -> expression ";" ;
+
+expression     -> assignment ;
+
+assignment     -> IDENTIFIER "=" assignment
+                | equality ;
+
+equality       -> comparison ( ( "==" | "!=" ) comparison )* ;
+
+comparison     -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+
+term           -> factor ( ( "+" | "-" ) factor )* ;
+
+factor         -> unary ( ( "*" | "/" ) unary )* ;
+
+unary          -> ( "-" | "!" ) unary
+                | primary ;
+
+primary        -> NUMBER
+                | STRING
+                | "True"
+                | "False"
+                | "null"
+                | IDENTIFIER
+                | "(" expression ")" ;
