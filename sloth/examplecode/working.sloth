@@ -1,7 +1,191 @@
-new a = "global";
-fun showA(){
-    print a;
+// Comprehensive demonstration of Sloth Programming Language
+// Showcasing syntax style and unique design features
+
+print "=== SLOTH LANGUAGE DEMONSTRATION ===";
+print "";
+
+// --- Unique Sloth Syntax Features ---
+print "=== Unique Sloth Syntax (vs Lox) ===";
+print "1. Classes declared with 'sloth' keyword";
+print "2. Variable declaration uses 'new' keyword";
+print "3. Return statements use 'give' keyword";
+print "4. Class inheritance uses '<' symbol";
+print "5. Super calls use 'supersloth' directly";
+print "";
+
+// --- Test 1: Variable Declaration with 'new' ---
+print "=== Variable Declaration (new keyword) ===";
+new language = "Sloth";
+new version = 1.0;
+new is_compiled = false;
+new creator = "Blake Collins";
+
+print "Language: " + language;
+print "Version: " + version;
+print "Compiled: " + is_compiled;
+print "Creator: " + creator;
+print "";
+
+// --- Test 2: Functions with 'give' return ---
+print "=== Functions with 'give' return ===";
+fun calculate_power(base, exponent) {
+    if (exponent == 0) {
+        give 1;
+    } else {
+        give base * calculate_power(base, exponent - 1);
+    }
 }
-showA();
-new a = "change_block";
-showA();
+
+fun greet_sloth(name) {
+    give "Hello from " + name + " the sloth!";
+}
+
+print "2^3 = " + calculate_power(2, 3);
+print greet_sloth("Speedy");
+print "";
+
+// --- Test 3: 'sloth' Class Declaration ---
+print "=== 'sloth' Class Declaration ===";
+sloth Vehicle {
+    init(make, model) {
+        this.make = make;
+        this.model = model;
+        this.speed = 0;
+        print "Created vehicle: " + make + " " + model;
+    }
+    
+    accelerate(amount) {
+        this.speed = this.speed + amount;
+        print this.make + " " + this.model + " accelerating to " + this.speed + " mph";
+    }
+    
+    get_info() {
+        give this.make + " " + this.model + " (Speed: " + this.speed + " mph)";
+    }
+}
+
+new car = Vehicle("Toyota", "Camry");
+car.accelerate(60);
+print "Info: " + car.get_info();
+print "";
+
+// --- Test 4: Inheritance with '<' symbol ---
+print "=== Inheritance with '<' symbol ===";
+sloth ElectricCar < Vehicle {
+    init(make, model, battery_capacity) {
+        supersloth.init(make, model);
+        this.battery_capacity = battery_capacity;
+        this.charge_level = 100;
+        print "Electric car initialized with " + battery_capacity + "kWh battery";
+    }
+    
+    accelerate(amount) {
+        this.speed = this.speed + amount;
+        this.charge_level = this.charge_level - (amount / 10);
+        print this.make + " " + this.model + " silently accelerating to " + this.speed + " mph";
+        print "Battery: " + this.charge_level + "%";
+    }
+    
+    charge() {
+        this.charge_level = 100;
+        print "Battery fully charged!";
+    }
+}
+
+new tesla = ElectricCar("Tesla", "Model S", 100);
+tesla.accelerate(80);
+tesla.charge();
+print "";
+
+// --- Test 5: Control Flow and Loops ---
+print "=== Control Flow and Loops ===";
+new countdown = 5;
+print "Countdown:";
+while (countdown > 0) {
+    print countdown;
+    countdown = countdown - 1;
+}
+print "Blast off!";
+
+print "For loop example:";
+for (new i = 1; i <= 3; i = i + 1) {
+    print "Iteration: " + i;
+}
+print "";
+
+// --- Test 6: Polymorphism Demonstration ---
+print "=== Polymorphism Demonstration ===";
+sloth Animal {
+    init(name, sound) {
+        this.name = name;
+        this.sound = sound;
+    }
+    
+    make_sound() {
+        print this.name + " says " + this.sound;
+    }
+}
+
+sloth SlowSloth < Animal {
+    init(name) {
+        supersloth.init(name, "zzzzz...");
+        this.nap_time = 20;
+    }
+    
+    make_sound() {
+        print this.name + " slowly says " + this.sound + " (naps " + this.nap_time + " hours)";
+    }
+}
+
+new generic_animal = Animal("Dog", "woof");
+new sleepy_sloth = SlowSloth("Lazy");
+
+generic_animal.make_sound();
+sleepy_sloth.make_sound();
+print "";
+
+// --- Test 7: Built-in Functions ---
+print "=== Built-in Functions ===";
+print "Current timestamp: " + clock();
+print "Pausing for 1 second...";
+delay(1);
+print "Resume after delay at: " + clock();
+print "";
+
+// --- Test 8: Advanced Features ---
+print "=== Advanced Features ===";
+sloth Counter {
+    init(start_value) {
+        this.count = start_value;
+    }
+    
+    increment() {
+        this.count = this.count + 1;
+        give this;  // Method chaining
+    }
+    
+    decrement() {
+        this.count = this.count - 1;
+        give this;  // Method chaining
+    }
+    
+    get_count() {
+        give this.count;
+    }
+}
+
+new counter = Counter(10);
+counter.increment();
+counter.increment();
+counter.decrement();
+print "Final count: " + counter.get_count();
+print "";
+
+print "=== END SLOTH DEMONSTRATION ===";
+print "Unique features demonstrated:";
+print "- 'sloth' keyword for classes";
+print "- 'new' keyword for variables"; 
+print "- 'give' keyword for returns";
+print "- '<' symbol for inheritance";
+print "- Built-in clock() and delay() functions";
+print "- Method chaining support";

@@ -43,7 +43,7 @@ class Scanner:
         "for"  : TokenValue.FOR,
         "print": TokenValue.PRINT,
         "give" : TokenValue.GIVE,   # return
-        "super": TokenValue.SUPER,
+        "supersloth": TokenValue.SUPER,
         "this" : TokenValue.THIS,
         "fun"  : TokenValue.FUN,
     }

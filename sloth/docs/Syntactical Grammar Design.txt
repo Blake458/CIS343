@@ -5,8 +5,20 @@
 
 program        -> statement* EOF ;
 
-declaration    -> varDecl
+declaration    -> classDecl
+                | funDecl
+                | varDecl
                 | statement
+
+classDecl      -> "sloth" IDENTIFIER "{" function* "}" ;
+
+function       -> IDENTIFIER "(" parameters? ")" block ;
+
+parameters     -> IDENTIFIER ( "," IDENTIFIER )* ;
+
+funDecl        -> "fun" IDENTIFIER "{"  "}"
+
+varDecl        -> "new" IDENTIFIER ("=" expression)? ";" ;
 
 statement      -> printStmt
                 | ifStmt
@@ -18,7 +30,6 @@ ifStmt         -> "if" "(" expression ")" statement
 
 printStmt      -> "print" expression ";" ;
 
-varDecl        -> "new" IDENTIFIER ("=" expression)? ";" ;
 
 block          -> "{" statement* "}" ;
 

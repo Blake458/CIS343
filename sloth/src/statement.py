@@ -100,3 +100,12 @@ class ReturnStmt(Statement):
     def accept(self, visitor):
         return visitor.visit_ReturnStmt(self)
 
+class SlothStmt(Statement):
+    def __init__(self, name, supersloth, methods):
+        self.name = name
+        self.supersloth = supersloth  # Variable | None
+        self.methods = methods        # List of Function
+
+    def accept(self, visitor):
+        return visitor.visit_Sloth(self)
+    

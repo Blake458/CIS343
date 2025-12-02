@@ -40,6 +40,7 @@ class Sloth:
 
         resolver = Resolver(self.interpreter)
         resolver.resolve_all(ast)
+        resolver.transfer_locals()
 
         # Stop if syntax errors were detected
         if ErrorHandler.error_detected:
